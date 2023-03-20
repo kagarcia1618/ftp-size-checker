@@ -126,9 +126,9 @@ if __name__ == '__main__':
     )
     context = '\n'.join([
         f"[INFO] FTP Host: {args.host}",
-        f"[INFO] FTP Username: {args.username}" if args.username else "FTP Username: anonymous",
-        f"[INFO] FTP Directory: {args.directory}" if args.directory else "FTP Directory: '/'",
-        f"[INFO] FTP Timeout: {args.timeout} secs" if args.timeout else "FTP Timeout: 60 secs",
+        f"[INFO] FTP Username: {args.username}" if args.username else "[INFO] FTP Username: anonymous",
+        f"[INFO] FTP Directory: {args.directory}" if args.directory else "[INFO] FTP Directory: '/'",
+        f"[INFO] FTP Timeout: {args.timeout} secs" if args.timeout else "[INFO] FTP Timeout: 60 secs",
         # f"Total File Size in Directory: {total_bytes}"
     ])
     print(context)
