@@ -56,7 +56,8 @@ class FtpSizeChecker(object):
             with self.time_limit():
                 ftp.dir('-Rt')
         except TimeoutException as e:
-            return None
+            sys.stdout = sys.__stdout__
+            return
 
         # Restore the original output stream to the terminal.
         sys.stdout = sys.__stdout__
