@@ -13,7 +13,7 @@ class FtpSizeChecker(object):
         self,
         host: str,
         timeout: int,
-        username: str = 'anonymous',
+        username: str,
         password: str = None,
         directory: str = None,
     ) -> None:
@@ -73,41 +73,11 @@ class FtpSizeChecker(object):
 
         return naturalsize(total_bytes)
 
-
-# ftp = FTP('ftp.ebi.ac.uk')
-# ftp.login()
-# ftp.cwd('/pub/databases/RNAcentral')
-
-# # Create the in-memory "file"
-# temp_out = StringIO()
-
-# # Replace default stdout (terminal) with our stream
-# sys.stdout = temp_out
-
-# try:
-#     with time_limit(60):
-#         ftp.dir('-Rt')
-# except TimeoutException as e:
-#     print("Timed out!")
-
-# # Restore the original output stream to the terminal.
-# sys.stdout = sys.__stdout__
-
-# #Remove empty lines
-# a = [ i for i in temp_out.getvalue().splitlines() if len(i) != 0 ]
-# #Remove lines that belongs to a directory or symbolic link except the directory header
-# b = [ i for i in a if i[0] not in ['l','d']]
-# #Remove lines that belongs to a directory or symbolic link except the directory header
-# c = [ i for i in b if i[0] not in ['.']]
-
-# total_bytes = 0
-# for line in c:
-#     total_bytes += int([i for i in line.split(' ') if i != '' ][4])
 if __name__ == '__main__':
     #Create Command Line Arguments
     parser = argparse.ArgumentParser(description='FTP directory total file size checker.')
     parser.add_argument('--host', help='FTP hostname or IP address')
-    parser.add_argument('--username', '-u', help='FTP Username')
+    parser.add_argument('--username', '-u', default = 'anonymous', help='FTP Username')
     parser.add_argument('--password', '-p', help='FTP Password')
     parser.add_argument('--directory', '-d', help='FTP Directory')
     parser.add_argument('--timeout',
@@ -142,4 +112,3 @@ if __name__ == '__main__':
             print(f"[ERROR] Max timeout of {args.timeout} seconds reached!")
         else:
             print(f"[ERROR] Max default timeout of 60 seconds reached!")
-
