@@ -124,21 +124,22 @@ if __name__ == '__main__':
         directory = args.directory,
         timeout = args.timeout,
     )
+    context = '\n'.join([
+        f"[INFO] FTP Host: {args.host}",
+        f"[INFO] FTP Username: {args.username}" if args.username else "FTP Username: anonymous",
+        f"[INFO] FTP Directory: {args.directory}" if args.directory else "FTP Directory: '/'",
+        f"[INFO] FTP Timeout: {args.timeout} secs" if args.timeout else "FTP Timeout: 60 secs",
+        # f"Total File Size in Directory: {total_bytes}"
+    ])
+    print(context)
     total_bytes = ftp_size.fetch_total_bytes()
 
-    context = '\n'.join([
-        f"FTP Host: {args.host}",
-        f"FTP Username: {args.username}" if args.username else "FTP Username: anonymous",
-        f"FTP Directory: {args.directory}" if args.directory else "FTP Directory: '/'",
-        f"FTP Timeout: {args.timeout} secs" if args.timeout else "FTP Timeout: 60 secs",
-        f"Total File Size in Directory: {total_bytes}"
-    ])
 
     if total_bytes:
-        print(context)
+        print(f"[SUCCESS] Total File Size in Directory: {total_bytes}")
     else:
         if args.timeout:
-            print(f"Max timeout of {args.timeout} seconds reached!")
+            print(f"[ERROR] Max timeout of {args.timeout} seconds reached!")
         else:
-            print(f"Max default timeout of 60 seconds reached!")
+            print(f"[ERROR] Max default timeout of 60 seconds reached!")
 
