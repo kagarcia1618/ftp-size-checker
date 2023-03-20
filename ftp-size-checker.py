@@ -5,7 +5,7 @@ from ftplib import FTP, error_perm
 from io import StringIO
 from contextlib import contextmanager
 from humanize import naturalsize
-from socket import gaierror
+from socket import gaierror, timeout
 
 
 class TimeoutException(Exception): pass
@@ -49,7 +49,7 @@ class FtpSizeChecker(object):
                 )
             if self.directory:
                 ftp.cwd(self.directory)
-        except (TimeoutError, gaierror, error_perm) as e:
+        except (TimeoutError, gaierror, error_perm, timeout) as e:
             self.error = f"[ERROR] {e}"
             return
         
