@@ -56,7 +56,7 @@ class FtpSizeChecker(object):
             with self.time_limit():
                 ftp.dir('-Rt')
         except TimeoutException as e:
-            return
+            return None
 
         # Restore the original output stream to the terminal.
         sys.stdout = sys.__stdout__
@@ -111,8 +111,6 @@ if __name__ == '__main__':
     parser.add_argument('--directory', '-d', help='FTP Directory')
     parser.add_argument('--timeout',
         '-t',
-        # nargs = '?',
-        # const = 60,
         default = 60,
         type = int,
         help = 'Max timeout for fetching the FTP directory list')
@@ -131,6 +129,7 @@ if __name__ == '__main__':
         f"FTP Host: {args.host}",
         f"FTP Username: {args.username}" if args.username else "FTP Username: anonymous",
         f"FTP Directory: {args.directory}" if args.directory else "FTP Directory: '/'",
+        f"FTP Timeout: {args.timeout} secs" if args.timeout else "FTP Timeout: 60 secs",
         f"Total File Size in Directory: {total_bytes}"
     ])
 
