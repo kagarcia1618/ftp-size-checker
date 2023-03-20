@@ -111,8 +111,9 @@ if __name__ == '__main__':
     parser.add_argument('--directory', '-d', help='FTP Directory')
     parser.add_argument('--timeout',
         '-t',
-        nargs = '?',
-        const = 60,
+        # nargs = '?',
+        # const = 60,
+        default = 60,
         type = int,
         help = 'Max timeout for fetching the FTP directory list')
     args = parser.parse_args()
