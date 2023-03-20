@@ -12,10 +12,10 @@ class FtpSizeChecker(object):
     def __init__(
         self,
         host: str,
+        timeout: int,
         username: str = 'anonymous',
         password: str = None,
         directory: str = None,
-        timeout: int = 60,
     ) -> None:
         self.host = host
         self.username = username
@@ -109,7 +109,7 @@ if __name__ == '__main__':
     parser.add_argument('--username', '-u', help='FTP Username')
     parser.add_argument('--password', '-p', help='FTP Password')
     parser.add_argument('--directory', '-d', help='FTP Directory')
-    parser.add_argument('--timeout', '-t', help='Max timeout for fetching the FTP directory list')
+    parser.add_argument('--timeout', '-t', const=60 help='Max timeout for fetching the FTP directory list')
     args = parser.parse_args()
 
     ftp_size = FtpSizeChecker(
