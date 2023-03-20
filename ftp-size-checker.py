@@ -109,7 +109,12 @@ if __name__ == '__main__':
     parser.add_argument('--username', '-u', help='FTP Username')
     parser.add_argument('--password', '-p', help='FTP Password')
     parser.add_argument('--directory', '-d', help='FTP Directory')
-    parser.add_argument('--timeout', '-t', const=60, help='Max timeout for fetching the FTP directory list')
+    parser.add_argument('--timeout',
+        '-t',
+        nargs = '?',
+        const = 60,
+        type = int,
+        help = 'Max timeout for fetching the FTP directory list')
     args = parser.parse_args()
 
     ftp_size = FtpSizeChecker(
