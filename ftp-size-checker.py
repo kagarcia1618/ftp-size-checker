@@ -39,7 +39,7 @@ class FtpSizeChecker(object):
 
     def fetch_total_bytes(self):
         try:
-            ftp = FTP(self.host)
+            ftp = FTP(self.host, timeout=10)
             if self.username == 'anonymous':
                 ftp.login()
             else:
