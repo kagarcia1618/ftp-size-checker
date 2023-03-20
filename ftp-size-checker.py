@@ -37,7 +37,7 @@ class FtpSizeChecker(object):
         finally:
             signal.alarm(0)
 
-    def fetch_total_bytes(self):
+    def run(self):
         try:
             ftp = FTP(self.host, timeout=10)
             if self.username == 'anonymous':
@@ -95,6 +95,7 @@ if __name__ == '__main__':
         help = 'Max timeout for fetching the FTP directory list')
     args = parser.parse_args()
 
+    #Initialize the FtpSizeChecker class object
     ftp_size = FtpSizeChecker(
         host = args.host,
         username = args.username,
@@ -102,6 +103,7 @@ if __name__ == '__main__':
         directory = args.directory,
         timeout = args.timeout,
     )
+    #Create a context date for displaying the input data
     context = '\n'.join([
         f"[INFO] FTP Host: {args.host}",
         f"[INFO] FTP Username: {args.username}" if args.username else "[INFO] FTP Username: anonymous",
@@ -109,14 +111,11 @@ if __name__ == '__main__':
         f"[INFO] FTP Timeout: {args.timeout} secs" if args.timeout else "[INFO] FTP Timeout: 60 secs",
     ])
     print(context)
-    total_bytes = ftp_size.fetch_total_bytes()
+    #Trigger the FTP connection and store the output data to a variable
+    total_bytes = ftp_size.run()
 
-
+    #Display the results
     if total_bytes:
         print(f"[SUCCESS] Total File Size in Directory: {total_bytes}")
     else:
         print(ftp_size.error)
-        # if args.timeout:
-        #     print(f"[ERROR] Max timeout of {args.timeout} seconds reached!")
-        # else:
-        #     print(f"[ERROR] Max default timeout of 60 seconds reached!")
