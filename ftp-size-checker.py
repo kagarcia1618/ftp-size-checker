@@ -1,10 +1,12 @@
 import sys
 import signal
 import argparse
-from ftplib import FTP
+from ftplib import FTP, error_perm
 from io import StringIO
 from contextlib import contextmanager
 from humanize import naturalsize
+from socket import gaierror
+
 
 class TimeoutException(Exception): pass
 
@@ -22,6 +24,7 @@ class FtpSizeChecker(object):
         self.password = password
         self.directory = directory
         self.timeout = timeout
+        self.error = None
 
     @contextmanager
     def time_limit(self):
@@ -35,16 +38,20 @@ class FtpSizeChecker(object):
             signal.alarm(0)
 
     def fetch_total_bytes(self):
-        ftp = FTP(self.host)
-        if self.username == 'anonymous':
-            ftp.login()
-        else:
-            ftp.login(
-                user = self.username,
-                passwd = self.password
-            )
-        if self.directory:
-            ftp.cwd(self.directory)
+        try:
+            ftp = FTP(self.host)
+            if self.username == 'anonymous':
+                ftp.login()
+            else:
+                ftp.login(
+                    user = self.username,
+                    passwd = self.password
+                )
+            if self.directory:
+                ftp.cwd(self.directory)
+        except (TimeoutError, gaierror, error_perm) as e:
+            self.error = f"[ERROR] {e}"
+            return
         
         # Create the in-memory "file"
         temp_out = StringIO()
@@ -55,8 +62,9 @@ class FtpSizeChecker(object):
         try:
             with self.time_limit():
                 ftp.dir('-Rt')
-        except TimeoutException as e:
+        except TimeoutException:
             sys.stdout = sys.__stdout__
+            self.error = f"[ERROR] Max timeout of {self.timeout} seconds reached!"
             return
 
         # Restore the original output stream to the terminal.
@@ -99,7 +107,6 @@ if __name__ == '__main__':
         f"[INFO] FTP Username: {args.username}" if args.username else "[INFO] FTP Username: anonymous",
         f"[INFO] FTP Directory: {args.directory}" if args.directory else "[INFO] FTP Directory: '/'",
         f"[INFO] FTP Timeout: {args.timeout} secs" if args.timeout else "[INFO] FTP Timeout: 60 secs",
-        # f"Total File Size in Directory: {total_bytes}"
     ])
     print(context)
     total_bytes = ftp_size.fetch_total_bytes()
@@ -108,7 +115,8 @@ if __name__ == '__main__':
     if total_bytes:
         print(f"[SUCCESS] Total File Size in Directory: {total_bytes}")
     else:
-        if args.timeout:
-            print(f"[ERROR] Max timeout of {args.timeout} seconds reached!")
-        else:
-            print(f"[ERROR] Max default timeout of 60 seconds reached!")
+        print(ftp_size.error)
+        # if args.timeout:
+        #     print(f"[ERROR] Max timeout of {args.timeout} seconds reached!")
+        # else:
+        #     print(f"[ERROR] Max default timeout of 60 seconds reached!")
